@@ -1,4 +1,4 @@
-use std::io::Stdout;
+use std::io::{Stdout, Write};
 use rand::{self, Rng};
 use crossterm::{self, cursor::MoveTo, QueueableCommand};
 
@@ -29,16 +29,23 @@ impl Column {
   pub fn draw(&self, terminal_rows : u16, stdout : &mut Stdout) {
     let mut string_to_print : &str;
     let mut char_position : u8 = 0;
+    let can_clear_the_path : bool;
 
-    let visible_position = match self.row.checked_sub(self.length) {
-      Some(value) => if value == 0 {1} else {value},
-      None => 1
+    let last_visible_position = match self.row.checked_sub(self.length) {
+      Some(value) => {
+        can_clear_the_path = true;
+        if value == 0 {1} else {value}
+      },
+      None => {
+        can_clear_the_path = false;
+        1
+      }
     };
 
     stdout.queue(MoveTo(self.column, self.row))
      .expect("Error on set cursor position");
 
-    for i in (visible_position..self.row).rev() {
+    for i in (last_visible_position..self.row).rev() {
       if i > terminal_rows {
         continue;
       }
@@ -53,6 +60,10 @@ impl Column {
       
       stdout.queue(MoveTo(self.column, i))
        .expect("Error on update cursor position");
+
+      if i == last_visible_position && can_clear_the_path {
+        stdout.write(" ".as_bytes()).expect("Could not clear the column path");
+      }
 
       char_position += 1;
     }

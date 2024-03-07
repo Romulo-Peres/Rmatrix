@@ -18,6 +18,8 @@ fn main() {
   controllers::exit_program_controller(exit_program_tx);
 
   stdout.execute(cursor::Hide).expect("Could not hide the cursor");
+  stdout.queue(Clear(ClearType::All))
+     .expect("Could not clear the terminal");
 
   while
     match exit_program_rx.try_recv() {
@@ -31,9 +33,6 @@ fn main() {
       },
       Err(_) => {}
     }
-
-    stdout.queue(Clear(ClearType::All))
-     .expect("Could not clear the terminal");
 
     
     columns_vector.retain_mut(|e| {
