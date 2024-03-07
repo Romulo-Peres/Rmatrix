@@ -1,7 +1,7 @@
 use std::{io::{stdout, Write}, sync::mpsc, thread, time::Duration};
 
 use components::column::Column;
-use crossterm::{cursor, terminal::{size, Clear, ClearType}, ExecutableCommand, QueueableCommand};
+use crossterm::{cursor::{self}, terminal::{size, Clear, ClearType}, ExecutableCommand, QueueableCommand};
 
 mod components;
 mod controllers;
