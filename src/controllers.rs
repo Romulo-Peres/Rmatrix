@@ -1,10 +1,17 @@
-use std::{io::stdin, sync::mpsc::Sender, thread, time::Duration};
+use std::{io::stdin, sync::{mpsc::Sender, Arc, Mutex}, thread, time::Duration};
 
-pub fn column_creator_controller(tx_channel : Sender<bool>, creation_timeout : u64) {
+use crate::components::column::Column;
+
+pub fn column_creator_controller(creation_timeout : u64, mutex : Arc<Mutex<Vec<Column>>>, terminal_columns : u16) {
   thread::spawn(move || {
     loop {
+      {
+        let mut columns_vector = mutex.lock().unwrap();
+
+        columns_vector.push(Column::new(terminal_columns));
+      }
+
       thread::sleep(Duration::from_millis(creation_timeout));
-      tx_channel.send(true).expect("Could not send column create message through the channel");
     }
   });
 }
