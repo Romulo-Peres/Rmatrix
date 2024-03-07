@@ -26,7 +26,7 @@ impl Column {
     self.row += 1;
   }
 
-  pub fn draw(&self, terminal_rows : u16, stdout : &mut Stdout) {
+  pub fn draw(&self, terminal_rows : u16, stdout : &mut Stdout, edge_color : [u8; 3], body_color : [u8; 3]){
     let mut string_to_print : &str;
     let mut char_position : u8 = 0;
     let can_clear_the_path : bool;
@@ -55,9 +55,9 @@ impl Column {
        .expect("Error on update cursor position");
 
       if i == self.row {
-        colors::print_column_nose(stdout, string_to_print);
+        colors::print_column_nose(stdout, string_to_print, edge_color);
       } else {
-        colors::print_column_body(stdout, string_to_print, char_position, self.length.try_into().unwrap());
+        colors::print_column_body(stdout, string_to_print, char_position, body_color);
       }
       
 
