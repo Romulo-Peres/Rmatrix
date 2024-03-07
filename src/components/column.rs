@@ -1,7 +1,8 @@
-use std::io::{Stdout, Write};
-
+use std::io::Stdout;
 use rand::{self, Rng};
 use crossterm::{self, cursor::MoveTo, QueueableCommand};
+
+use crate::colors;
 
 #[derive(Debug)]
 pub struct Column {
@@ -26,6 +27,8 @@ impl Column {
   }
 
   pub fn draw(&self, terminal_rows : u16, stdout : &mut Stdout) {
+    let mut string_to_print : &str;
+    let mut char_position : u8 = 0;
 
     let visible_position = match self.row.checked_sub(self.length) {
       Some(value) => if value == 0 {1} else {value},
@@ -40,12 +43,18 @@ impl Column {
         continue;
       }
 
-      stdout.write((&self.characters[(i as usize)-1..(i as usize)])
-       .as_bytes())
-        .expect("Error on write column on terminal");
-
+      string_to_print = &self.characters[(i as usize)-1..(i as usize)];
+      
+      if i == self.row - 1 {
+        colors::print_column_nose(stdout, string_to_print);
+      } else {
+        colors::print_column_body(stdout, string_to_print, char_position, self.length.try_into().unwrap());
+      }
+      
       stdout.queue(MoveTo(self.column, i))
        .expect("Error on update cursor position");
+
+      char_position += 1;
     }
   }
 

@@ -5,6 +5,7 @@ use crossterm::{cursor, terminal::{size, Clear, ClearType}, ExecutableCommand, Q
 
 mod components;
 mod controllers;
+mod colors;
 
 fn main() {
   let (column_create_tx, column_create_rx) = mpsc::channel();
@@ -13,7 +14,7 @@ fn main() {
   let (terminal_width, terminal_height) = size().unwrap();
   let mut stdout = stdout();
 
-  controllers::column_creator_controller(column_create_tx, 150);
+  controllers::column_creator_controller(column_create_tx, 50);
   controllers::exit_program_controller(exit_program_tx);
 
   stdout.execute(cursor::Hide).expect("Could not hide the cursor");
