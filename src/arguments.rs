@@ -12,8 +12,8 @@ pub struct Args {
   #[arg(long="render-speed", short='r', default_value_t=30)]
   pub render_speed : u64,
 
-  #[arg(long="column-interval", short='n', default_value_t=20)]
-  pub column_interval : u64
+  #[arg(long="string-interval", short='n', default_value_t=20)]
+  pub string_interval : u64
 }
 
 macro_rules! vec_to_array {

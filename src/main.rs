@@ -21,7 +21,7 @@ fn main() {
     vec_to_array!(program_arguments.body_color)
   );
 
-  controllers::column_creator_controller(program_arguments.column_interval, Arc::clone(&mutex), Arc::clone(&terminal_width));
+  controllers::column_creator_controller(program_arguments.string_interval, Arc::clone(&mutex), Arc::clone(&terminal_width));
   controllers::exit_program_controller(exit_program_tx);
 
   execute!(
