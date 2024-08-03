@@ -109,7 +109,7 @@ fn column_length() -> u16 {
 }
 
 fn column_characters(terminal_columns: u16) -> String {
-    let available_characters = "a0b1c2d3e4f3g6h7i8j9k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6";
+    let available_characters = "'/a0b!1c@2d#3e$%4f&3g*(6h)7i|_8j-+9k=[]\\1l,/2m3n;.4o5p~`6q7r8s9\"^t0u1v2w3x4y5z6";
     let mut characters = String::new();
     let mut rng = rand::thread_rng();
     let mut slice_index;
