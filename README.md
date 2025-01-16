@@ -1,22 +1,22 @@
 <div align="center">
     <img width="100%" src="./assets/project image.png">
     <h1></h1>
-    <h3>A matrix simulator for terminal interfaces written in Rust with customizable features</h3>
+    <h3>A terminal-based Matrix simulator written in Rust with customizable features.</h3>
 </div>
                                                                                   
 <div align="center">
     <img width="100%" src="./assets/rmatrix.gif">
 </div>                   
 <div align="center">                                                  
-    The (Remastered) R-matrix uses some features of the modern terminals to create the illusion of a matrix effect. The project has customizable features that make the matrix more attractive and behaves the way you like most.
+The (Remastered) R-matrix uses modern terminal capabilities to simulate a Matrix effect. Its customizable features let you fine-tune the visuals and behaviors for a more personalized experience.
 </div>
 
 # Features
 <ul>
-    <li>Set matrix body color</li>
-    <li>Set matrix edge color</li>
-    <li>Set string interval</li>
-    <li>Set render speed</li>
+    <li>String body colors</li>
+    <li>String edge colors</li>
+    <li>String generation interval</li>
+    <li>Render speed</li>
 </ul>
 
 # Table of contents
@@ -39,7 +39,7 @@
 [Exit the program](#exit-the-program)
 
 # Compiling the project
-The compilation of the project can be simply done using the cargo build command. Assuming you are at the root of the project, call the following command:
+The compilation of the project can be simply done using the cargo build command. Assuming you are at the root of the project, the following command should do the trick:
 ```sh
 cargo build --release
 ```
@@ -52,46 +52,42 @@ By default the program runs by just calling its executable that is generated ins
 ```
 
 # Custom colors
-R-matrix allows you to set new colors for the matrix body and edges.
+R-matrix uses green by default, but you can customize it with your preferred colors.
 
 ## Matrix body color
-Set a new value to matrix body color will change the color of the strings rendered on screen
-
+Setting a new value for the matrix body color will change the color of the strings rendered on screen.
 ```sh
 rmatrix --body-color <R> <G> <B>
 ```
 
-The default RGB value to this feature is 0 255 0 (Green)
+<b>Default value: 0 255 0 (Green)</b>
 
     
 ## Matrix edge color
-Set a new value to matrix edge color will change the first character's color of all matrix strings
-
+Setting a new value for the matrix edge color will change the color of the first character in all matrix strings.
 ```sh
 rmatrix --edge-color <R> <G> <B>
 ```
-Default value to: 255 255 255 (White)
+<b>Default value: 255 255 255 (White)</b>
 
 
 # Custom behaviors
-R-matrix make it also possible to set the speed which new strings are generated and how quickly they are rendered on screen.
+R-matrix also allows you to set the speed at which new strings are generated and how quickly they are rendered on screen.
 
 ## String interval
-Set a new value to string interval will change the delay to create a new Rmatrix string
+Setting a new value for the string interval will adjust the delay for creating a new R-matrix string.
 
 ```sh
 rmatrix --string-interval <Ms>
 ```
-The default value is 20 (milliseconds)
+<b>Default value: 20 (milliseconds)</b>
 
 ## Render speed
-Set a new value to render speed will change the how quickly the Rmatrix strings are pulled down
-
+Setting a new value for the render speed will change how quickly the R-matrix strings are pulled down.
 ```sh
 rmatrix --render-speed <Ms>
 ```
-Default to: 30 (millisecond)
+<b>Default value: 30 (milliseconds)</b>
 
 # Exit the program
-To exit the program while it is running, simply press Enter. The expected behavior is for the matrix to disappear and for all terminal configurations to be reset to default.
-
+To exit the program while it is running, simply press Enter. The expected behavior is that the matrix will disappear, and all terminal settings will be reset to their default configuration.
