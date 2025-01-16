@@ -14,6 +14,9 @@ pub struct Args {
 
     #[arg(long = "string-interval", short = 'n', default_value_t = 20)]
     pub string_interval: u64,
+
+    #[arg(long = "rainbow-mode", short = 'a', default_value_t = false)]
+    pub raindow_mode: bool,
 }
 
 macro_rules! vec_to_array {

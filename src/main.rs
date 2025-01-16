@@ -1,7 +1,9 @@
+
 mod arguments;
 mod colors;
 mod components;
 mod controllers;
+mod utilities;
 
 use arguments::{vec_to_array, Args};
 use clap::Parser;
@@ -14,6 +16,7 @@ use crossterm::{
     },
     QueueableCommand,
 };
+
 use std::{
     io::{stdout, Write},
     sync::{
@@ -40,6 +43,9 @@ fn main() {
         program_arguments.string_interval,
         Arc::clone(&mutex),
         Arc::clone(&terminal_width),
+	program_colors.1,
+	program_colors.0,
+	program_arguments.raindow_mode
     );
     controllers::exit_program_controller(exit_program_tx);
 
@@ -77,12 +83,19 @@ fn main() {
                     return false;
                 }
 
-                e.draw(
-                    terminal_height,
-                    &mut stdout,
-                    program_colors.0,
-                    program_colors.1,
-                );
+		if program_arguments.raindow_mode {
+		    e.draw(
+			terminal_height,
+			&mut stdout
+                    );
+		} else {
+		    e.draw(
+			terminal_height,
+			&mut stdout
+		    );
+		}
+
+
 
                 return true;
             });

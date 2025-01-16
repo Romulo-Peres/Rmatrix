@@ -10,15 +10,19 @@ pub struct Column {
     length: u16,
     column: u16,
     row: u16,
+    body_color: [u8; 3],
+    edge_color: [u8; 3]
 }
 
 impl Column {
-    pub fn new(terminal_columns: u16) -> Self {
+    pub fn new(terminal_columns: u16, body_color: [u8; 3], edge_color: [u8; 3]) -> Self {
         return Column {
             characters: column_characters(terminal_columns),
             length: column_length(),
             column: column_position(terminal_columns),
             row: 0,
+	    body_color,
+	    edge_color
         };
     }
 
@@ -29,9 +33,7 @@ impl Column {
     pub fn draw(
         &self,
         terminal_rows: u16,
-        stdout: &mut Stdout,
-        edge_color: [u8; 3],
-        body_color: [u8; 3],
+        stdout: &mut Stdout
     ) {
         let mut string_to_print: char;
         let mut char_position: u8 = 0;
@@ -64,9 +66,9 @@ impl Column {
                     .expect("Error on update cursor position");
     
                 if i == self.row {
-                    colors::print_column_nose(stdout, string_to_print, edge_color);
+                    colors::print_column_nose(stdout, string_to_print, self.edge_color);
                 } else {
-                    colors::print_column_body(stdout, string_to_print, char_position, body_color);
+                    colors::print_column_body(stdout, string_to_print, char_position, self.body_color);
                 }
             }
 
