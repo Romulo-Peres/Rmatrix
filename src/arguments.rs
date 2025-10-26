@@ -1,4 +1,4 @@
-use clap::Parser;
+use clap::{error, Parser};
 
 #[derive(Parser, Debug)]
 #[command(version = "1.0", about = "Customizable matrix for terminal interfaces")]
@@ -17,6 +17,24 @@ pub struct Args {
 
     #[arg(long = "rainbow-mode", short = 'a', default_value_t = false)]
     pub raindow_mode: bool,
+
+    #[arg(long = "minimum-stream-delay", short = 'm', default_value_t = 20)]
+    pub minimum_stream_delay: u16,
+
+    #[arg(long = "maximum-stream-delay", short = 'M', default_value_t = 90)]
+    pub maximum_stream_delay: u16
+}
+
+impl Args {
+    pub fn validate(&self) {
+        if self.minimum_stream_delay >= self.maximum_stream_delay {
+            clap::error::Error::<error::DefaultFormatter>::raw(
+                clap::error::ErrorKind::InvalidValue,
+                "--maximum-stream-delay (-M) must be greater than --minimum-stream-delay (-m)\n",
+            )
+            .exit();
+        }
+    }
 }
 
 macro_rules! vec_to_array {
