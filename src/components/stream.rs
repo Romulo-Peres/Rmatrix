@@ -1,6 +1,7 @@
 use crossterm::{self, cursor::MoveTo, execute, style::Print, QueueableCommand};
 use rand::{self, Rng};
 use std::io::Stdout;
+use chrono::{DateTime, Utc};
 
 use crate::colors;
 
@@ -11,23 +12,32 @@ pub struct Stream {
     column: u16,
     row: u16,
     body_color: [u8; 3],
-    edge_color: [u8; 3]
+    edge_color: [u8; 3],
+    next_row_delay: u16,
+    last_row_increment: DateTime<Utc>
 }
 
 impl Stream {
-    pub fn new(terminal_columns: u16, body_color: [u8; 3], edge_color: [u8; 3]) -> Self {
+    pub fn new(terminal_columns: u16, body_color: [u8; 3], edge_color: [u8; 3], min_delay: u16, max_delay: u16) -> Self {
         return Stream {
             characters: column_characters(terminal_columns),
             length: column_length(),
             column: column_position(terminal_columns),
             row: 0,
-	    body_color,
-	    edge_color
+	        body_color,
+	        edge_color,
+            next_row_delay: rand::thread_rng().gen_range(min_delay..max_delay),
+            last_row_increment: Utc::now()
         };
     }
 
-    pub fn increment_row(&mut self) {
-        self.row += 1;
+    pub fn try_to_increment_row(&mut self) {
+        let diff = Utc::now() - self.last_row_increment;
+
+        if diff.num_milliseconds() > self.next_row_delay as i64{
+            self.last_row_increment = Utc::now();
+            self.row += 1;
+        }
     }
 
     pub fn draw(

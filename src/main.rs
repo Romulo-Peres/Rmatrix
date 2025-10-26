@@ -39,13 +39,17 @@ fn main() {
         vec_to_array!(program_arguments.body_color),
     );
 
-    controllers::column_creator_controller(
+    program_arguments.validate();
+    
+    controllers::stream_creator_controller(
         program_arguments.string_interval,
         Arc::clone(&mutex),
         Arc::clone(&terminal_width),
-	program_colors.1,
-	program_colors.0,
-	program_arguments.raindow_mode
+	    program_colors.1,
+	    program_colors.0,
+	    program_arguments.raindow_mode,
+        program_arguments.minimum_stream_delay,
+        program_arguments.maximum_stream_delay
     );
     controllers::exit_program_controller(exit_program_tx);
 
@@ -76,7 +80,7 @@ fn main() {
             }
 
             vector_mutex.retain_mut(|e| {
-                e.increment_row();
+                e.try_to_increment_row();
 
                 if e.out_of_visible_area(terminal_height) {
 

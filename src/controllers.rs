@@ -12,23 +12,25 @@ use crossterm::event::{read, Event, KeyCode};
 
 use crate::{components::stream::Stream, utilities::generate_random_color};
 
-pub fn column_creator_controller(
+pub fn stream_creator_controller(
     creation_timeout: u64,
     mutex: Arc<Mutex<Vec<Stream>>>,
     terminal_columns: Arc<AtomicU16>,
     body_color: [u8; 3],
     edge_color: [u8; 3],
-    rainbow_mode: bool
+    rainbow_mode: bool,
+    minimum_stream_delay: u16,
+    maximum_stream_delay: u16
 ) {
     thread::spawn(move || loop {
         {
             let mut columns_vector = mutex.lock().unwrap();
 
-	    if rainbow_mode {
-		columns_vector.push(Stream::new(terminal_columns.load(Ordering::SeqCst), generate_random_color(), [255, 255, 255]));
-	    } else {
-		columns_vector.push(Stream::new(terminal_columns.load(Ordering::SeqCst), body_color, edge_color));
-	    }
+	        if rainbow_mode {
+		        columns_vector.push(Stream::new(terminal_columns.load(Ordering::SeqCst), generate_random_color(), [255, 255, 255], minimum_stream_delay, maximum_stream_delay));
+	        } else {
+    		    columns_vector.push(Stream::new(terminal_columns.load(Ordering::SeqCst), body_color, edge_color, minimum_stream_delay, maximum_stream_delay));
+	        }
         }
 
         thread::sleep(Duration::from_millis(creation_timeout));
