@@ -15,7 +15,7 @@ pub struct Args {
     #[arg(long = "rainbow-mode", short = 'a', default_value_t = false)]
     pub raindow_mode: bool,
 
-    #[arg(long = "minimum-stream-delay", short = 'm', default_value_t = 20)]
+    #[arg(long = "minimum-stream-delay", short = 'm', default_value_t = 40)]
     pub minimum_stream_delay: u16,
 
     #[arg(long = "maximum-stream-delay", short = 'M', default_value_t = 90)]
