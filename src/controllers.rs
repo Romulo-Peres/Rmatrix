@@ -8,6 +8,8 @@ use std::{
     time::Duration,
 };
 
+use rand::Rng;
+
 use crossterm::event::{read, Event, KeyCode};
 
 use crate::{components::stream::Stream, utilities::generate_random_color};
@@ -27,9 +29,9 @@ pub fn stream_creator_controller(
             let mut columns_vector = mutex.lock().unwrap();
 
 	        if rainbow_mode {
-		        columns_vector.push(Stream::new(terminal_columns.load(Ordering::SeqCst), generate_random_color(), [255, 255, 255], minimum_stream_delay, maximum_stream_delay));
+		        columns_vector.push(Stream::new(terminal_columns.load(Ordering::SeqCst), generate_random_color(), [255, 255, 255], minimum_stream_delay, maximum_stream_delay, fifty_percent()));
 	        } else {
-    		    columns_vector.push(Stream::new(terminal_columns.load(Ordering::SeqCst), body_color, edge_color, minimum_stream_delay, maximum_stream_delay));
+    		    columns_vector.push(Stream::new(terminal_columns.load(Ordering::SeqCst), body_color, edge_color, minimum_stream_delay, maximum_stream_delay, fifty_percent()));
 	        }
         }
 
@@ -50,4 +52,10 @@ pub fn exit_program_controller(tx_channel: Sender<bool>) {
             _ => {}
         }
     });
+}
+
+
+fn fifty_percent() -> bool {
+    let mut rng = rand::thread_rng();
+    rng.gen_range(0..2) == 0
 }

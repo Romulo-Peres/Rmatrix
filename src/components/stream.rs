@@ -18,7 +18,23 @@ pub struct Stream {
 }
 
 impl Stream {
-    pub fn new(terminal_columns: u16, body_color: [u8; 3], edge_color: [u8; 3], min_delay: u16, max_delay: u16) -> Self {
+    pub fn new(terminal_columns: u16, mut body_color: [u8; 3], mut edge_color: [u8; 3], min_delay: u16, max_delay: u16, is_background_stream: bool) -> Self {
+        let next_row_delay;
+
+        if is_background_stream {
+            next_row_delay = max_delay;
+
+            for color in &mut body_color {
+                *color = *color / 2;
+            }
+
+            for color in &mut edge_color {
+                *color = *color / 2;
+            }
+        } else {
+            next_row_delay = rand::thread_rng().gen_range(min_delay..max_delay);
+        }
+
         return Stream {
             characters: column_characters(terminal_columns),
             length: column_length(),
@@ -26,7 +42,7 @@ impl Stream {
             row: 0,
 	        body_color,
 	        edge_color,
-            next_row_delay: rand::thread_rng().gen_range(min_delay..max_delay),
+            next_row_delay,
             last_row_increment: Utc::now()
         };
     }
