@@ -1,9 +1,9 @@
-use crossterm::{self, cursor::MoveTo, execute, style::Print, QueueableCommand};
-use rand::{self, Rng};
-use std::io::Stdout;
 use chrono::{DateTime, Utc};
+use crossterm::{self, cursor::MoveTo, execute, style::{Attribute, Color, Print, ResetColor, SetAttribute, SetForegroundColor}, QueueableCommand};
+use rand::{self, Rng};
+use std::io::{Stdout, Write};
 
-use crate::colors;
+use crate::utilities;
 
 #[derive(Debug)]
 pub struct Stream {
@@ -11,75 +11,71 @@ pub struct Stream {
     length: u16,
     column: u16,
     row: u16,
-    body_color: [u8; 3],
-    edge_color: [u8; 3],
+    trail_color: [u8; 3],
+    head_color: [u8; 3],
     next_row_delay: u16,
-    last_row_increment: DateTime<Utc>
+    last_row_increment: DateTime<Utc>,
 }
 
 impl Stream {
-    pub fn new(terminal_columns: u16, mut body_color: [u8; 3], mut edge_color: [u8; 3], min_delay: u16, max_delay: u16, is_background_stream: bool) -> Self {
+    pub fn new(
+        terminal_columns: u16,
+        mut trail_color: [u8; 3],
+        mut head_color: [u8; 3],
+        min_delay: u16,
+        max_delay: u16,
+        is_background_stream: bool,
+    ) -> Self {
         let next_row_delay;
 
         if is_background_stream {
             next_row_delay = max_delay;
-
-            for color in &mut body_color {
-                *color = *color / 2;
-            }
-
-            for color in &mut edge_color {
-                *color = *color / 2;
-            }
+            utilities::shade_stream_colors(&mut trail_color, &mut head_color);
         } else {
             next_row_delay = rand::thread_rng().gen_range(min_delay..max_delay);
         }
 
+        let stream_characters = utilities::generate_stream_characters(terminal_columns);
+        let stream_length = utilities::stream_length();
+        let stream_position = utilities::stream_position(terminal_columns);
+
         return Stream {
-            characters: column_characters(terminal_columns),
-            length: column_length(),
-            column: column_position(terminal_columns),
+            characters: stream_characters,
+            length: stream_length,
+            column: stream_position,
             row: 0,
-	        body_color,
-	        edge_color,
+            trail_color,
+            head_color,
             next_row_delay,
-            last_row_increment: Utc::now()
+            last_row_increment: Utc::now(),
         };
     }
 
     pub fn try_to_increment_row(&mut self) {
         let diff = Utc::now() - self.last_row_increment;
 
-        if diff.num_milliseconds() > self.next_row_delay as i64{
+        if diff.num_milliseconds() > self.next_row_delay as i64 {
             self.last_row_increment = Utc::now();
             self.row += 1;
         }
     }
 
-    pub fn draw(
-        &self,
-        terminal_rows: u16,
-        stdout: &mut Stdout
-    ) {
+    pub fn draw(&self, terminal_rows: u16, stdout: &mut Stdout) {
         let mut string_to_print: char;
         let mut char_position: u8 = 0;
-        let can_clear_the_path: bool;
+        let mut enable_path_cleaning: bool = true;
 
         let last_visible_position = match self.row.checked_sub(self.length) {
-            Some(value) => {
-                can_clear_the_path = true;
-
-                value
-            }
-            None => {
-                can_clear_the_path = false;
-
-                0
-            }
+            Some(value) => value,
+            None => 0,
         };
 
-        for i in (last_visible_position..=self.row).rev() {
+        if last_visible_position == 0 {
+            enable_path_cleaning = false;
+        }
 
+        for i in (last_visible_position..=self.row).rev() {
+            /* Ignore the part of the stream that is offscreen */
             if i > terminal_rows {
                 continue;
             }
@@ -89,19 +85,24 @@ impl Stream {
 
                 stdout
                     .queue(MoveTo(self.column, i))
-                    .expect("Error on update cursor position");
-    
+                    .expect("Failed to update cursor position");
+
                 if i == self.row {
-                    colors::print_column_nose(stdout, string_to_print, self.edge_color);
+                    print_stream_head(stdout, string_to_print, self.head_color);
                 } else {
-                    colors::print_column_body(stdout, string_to_print, char_position, self.body_color);
+                    print_stream_trail(
+                        stdout,
+                        string_to_print,
+                        char_position,
+                        self.trail_color,
+                    );
                 }
             }
 
-            if i == last_visible_position && can_clear_the_path {
+            if i == last_visible_position && enable_path_cleaning {
                 match i.checked_sub(1) {
                     Some(v) => execute!(stdout, MoveTo(self.column, v), Print(" "))
-                        .expect("Could not clear the column path"),
+                        .expect("Could not clear the stream path"),
                     None => {}
                 }
             }
@@ -110,7 +111,7 @@ impl Stream {
         }
     }
 
-    pub fn out_of_visible_area(&self, terminal_rows: u16) -> bool {
+    pub fn is_offscreen(&self, terminal_rows: u16) -> bool {
         match self.row.checked_sub(self.length) {
             Some(column_tail) => {
                 if column_tail > terminal_rows {
@@ -124,31 +125,55 @@ impl Stream {
     }
 }
 
-fn column_position(columns: u16) -> u16 {
-    let mut rng = rand::thread_rng();
+pub fn print_stream_head(stdout: &mut Stdout, value: char, head_color: [u8; 3]) {
+    stdout
+        .queue(SetForegroundColor(Color::Rgb {
+            r: head_color[0],
+            g: head_color[1],
+            b: head_color[2],
+        }))
+        .expect("Could not set foreground color");
 
-    return rng.gen_range(0..columns);
+    stdout
+        .queue(SetAttribute(Attribute::Bold))
+        .expect("Could not set bold style");
+    stdout
+        .write(value.to_string().as_bytes())
+        .expect("Could not print a stream character");
+    stdout
+        .queue(ResetColor)
+        .expect("Could not reset terminal color");
+    stdout
+        .queue(SetAttribute(Attribute::Reset))
+        .expect("Could not reset bold style");
 }
 
-fn column_length() -> u16 {
-    let mut rng = rand::thread_rng();
-
-    return rng.gen_range(5..=18);
-}
-
-fn column_characters(terminal_columns: u16) -> String {
-    let available_characters = "'/a0b!1c@2d#3e$%4f&3g*(6h)7i|_8j-+9k=[]\\1l,/2m3n;.4o5p~`6q7r8s9\"^t0u1v2w3x4y5z6";
-    let mut characters = String::new();
-    let mut rng = rand::thread_rng();
-    let mut slice_index;
-    let mut i = 0;
-
-    while i <= terminal_columns + 5 {
-        slice_index = rng.gen_range(1..=available_characters.len());
-        characters.push_str(&available_characters[slice_index - 1..slice_index]);
-
-        i += 1;
+pub fn print_stream_trail(
+    stdout: &mut Stdout,
+    value: char,
+    char_position: u8,
+    mut body_color: [u8; 3],
+) {
+    for color in &mut body_color {
+        *color = match color.checked_sub(char_position * 9) {
+            Some(result) => result,
+            None => 0,
+        }
     }
 
-    return characters;
+    let body_color = Color::Rgb {
+        r: body_color[0],
+        g: body_color[1],
+        b: body_color[2],
+    };
+
+    stdout
+        .queue(SetForegroundColor(body_color))
+        .expect("Could not set foreground color");
+    stdout
+        .write(value.to_string().as_bytes())
+        .expect("Could not print a stream character");
+    stdout
+        .queue(ResetColor)
+        .expect("Could not reset terminal color");
 }

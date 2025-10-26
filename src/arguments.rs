@@ -3,11 +3,11 @@ use clap::{error, Parser};
 #[derive(Parser, Debug)]
 #[command(version = "1.0", about = "Customizable matrix for terminal interfaces")]
 pub struct Args {
-    #[arg(long="edge-color", short='e', num_args=3, default_values_t=[255, 255, 255])]
-    pub edge_color: Vec<u8>,
+    #[arg(long="head-color", short='e', num_args=3, default_values_t=[255, 255, 255])]
+    pub head_color: Vec<u8>,
 
-    #[arg(long="body-color", short='b', num_args=3, default_values_t=[0, 255, 0])]
-    pub body_color: Vec<u8>,
+    #[arg(long="trail-color", short='b', num_args=3, default_values_t=[0, 255, 0])]
+    pub trail_color: Vec<u8>,
 
     #[arg(long = "string-interval", short = 'n', default_value_t = 20)]
     pub string_interval: u64,

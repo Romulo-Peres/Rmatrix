@@ -13,10 +13,10 @@ The (Remastered) R-matrix uses modern terminal capabilities to simulate a Matrix
 
 ## Features
 <ul>
-    <li>String body colors</li>
-    <li>String edge colors</li>
-    <li>String generation interval</li>
-    <li>Render speed</li>
+    <li>Customizable stream trail color</li>
+    <li>Customizable stream head color</li>
+    <li>Configurable stream generation interval</li>
+    <li>Independent speed for different streams</li>
     <li>Rainbow mode</li>
 </ul>
 
@@ -29,7 +29,7 @@ The (Remastered) R-matrix uses modern terminal capabilities to simulate a Matrix
 
  - [Matrix body color](#matrix-body-color)
 
- - [Matrix edge color](#matrix-edge-color)
+ - [Matrix head color](#matrix-head-color)
 
 [Custom behaviors](#custom-behaviors)
 
@@ -64,10 +64,10 @@ rmatrix --body-color <R> <G> <B>
 <b>Default value: 0 255 0 (Green)</b>
 
     
-### Matrix edge color
-Setting a new value for the matrix edge color will change the color of the first character in all matrix strings.
+### Matrix head color
+Setting a new value for the matrix head color will change the color of the first character in all matrix strings.
 ```sh
-rmatrix --edge-color <R> <G> <B>
+rmatrix --head-color <R> <G> <B>
 ```
 <b>Default value: 255 255 255 (White)</b>
 
@@ -94,7 +94,7 @@ rmatrix --render-speed <Ms>
 R-matrix offers additional modes beyond the default one. Below is a detailed section explaining how they work.
 
 ### Rainbow mode
-The rainbow mode generates strings with random body colors, making your terminal and, possibly your setup, vibrant and colorful. The string edges are set to bright white `(255, 255, 255)`.
+The rainbow mode generates strings with random body colors, making your terminal and, possibly your setup, vibrant and colorful. The streams' head are set to bright white `(255, 255, 255)`.
 
 The rainbow mode can not have its colors changed by any flag.
 
