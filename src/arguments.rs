@@ -9,9 +9,6 @@ pub struct Args {
     #[arg(long="body-color", short='b', num_args=3, default_values_t=[0, 255, 0])]
     pub body_color: Vec<u8>,
 
-    #[arg(long = "render-speed", short = 'r', default_value_t = 30)]
-    pub render_speed: u64,
-
     #[arg(long = "string-interval", short = 'n', default_value_t = 20)]
     pub string_interval: u64,
 

@@ -107,7 +107,7 @@ fn main() {
 
         stdout.flush().unwrap();
 
-        thread::sleep(Duration::from_millis(program_arguments.render_speed));
+        thread::sleep(Duration::from_millis(10));
     }
 
     execute!(stdout, LeaveAlternateScreen, cursor::Show).expect("Could not reset the terminal");
