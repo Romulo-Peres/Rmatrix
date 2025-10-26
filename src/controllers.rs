@@ -10,11 +10,11 @@ use std::{
 
 use crossterm::event::{read, Event, KeyCode};
 
-use crate::{components::column::Column, utilities::generate_random_color};
+use crate::{components::stream::Stream, utilities::generate_random_color};
 
 pub fn column_creator_controller(
     creation_timeout: u64,
-    mutex: Arc<Mutex<Vec<Column>>>,
+    mutex: Arc<Mutex<Vec<Stream>>>,
     terminal_columns: Arc<AtomicU16>,
     body_color: [u8; 3],
     edge_color: [u8; 3],
@@ -25,9 +25,9 @@ pub fn column_creator_controller(
             let mut columns_vector = mutex.lock().unwrap();
 
 	    if rainbow_mode {
-		columns_vector.push(Column::new(terminal_columns.load(Ordering::SeqCst), generate_random_color(), [255, 255, 255]));
+		columns_vector.push(Stream::new(terminal_columns.load(Ordering::SeqCst), generate_random_color(), [255, 255, 255]));
 	    } else {
-		columns_vector.push(Column::new(terminal_columns.load(Ordering::SeqCst), body_color, edge_color));
+		columns_vector.push(Stream::new(terminal_columns.load(Ordering::SeqCst), body_color, edge_color));
 	    }
         }
 

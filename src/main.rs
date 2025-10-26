@@ -7,7 +7,7 @@ mod utilities;
 
 use arguments::{vec_to_array, Args};
 use clap::Parser;
-use components::column::Column;
+use components::stream::Stream;
 use crossterm::{
     cursor, execute,
     terminal::{
@@ -31,7 +31,7 @@ fn main() {
     let (exit_program_tx, exit_program_rx) = mpsc::channel();
     let (terminal_width, mut terminal_height) = size().unwrap();
     let mut stdout = stdout();
-    let mutex: Arc<Mutex<Vec<Column>>> = Arc::new(Mutex::new(Vec::new()));
+    let mutex: Arc<Mutex<Vec<Stream>>> = Arc::new(Mutex::new(Vec::new()));
     let program_arguments = Args::parse();
     let terminal_width = Arc::new(AtomicU16::new(terminal_width));
     let program_colors = (

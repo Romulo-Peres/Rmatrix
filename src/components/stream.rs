@@ -5,7 +5,7 @@ use std::io::Stdout;
 use crate::colors;
 
 #[derive(Debug)]
-pub struct Column {
+pub struct Stream {
     characters: String,
     length: u16,
     column: u16,
@@ -14,9 +14,9 @@ pub struct Column {
     edge_color: [u8; 3]
 }
 
-impl Column {
+impl Stream {
     pub fn new(terminal_columns: u16, body_color: [u8; 3], edge_color: [u8; 3]) -> Self {
-        return Column {
+        return Stream {
             characters: column_characters(terminal_columns),
             length: column_length(),
             column: column_position(terminal_columns),
