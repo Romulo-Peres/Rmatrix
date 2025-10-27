@@ -20,11 +20,11 @@ The Rmatrix project leverages advanced features of modern terminals to simulate 
 </ul>
 
 ## Table of contents
-[Building the software](#building-the-software)
+[Building the software](#building-the-software-%EF%B8%8F)
 
-[Understanding the architecture behind the scenes](#understanding-the-architecture-behind-the-scenes)
+[Understanding the architecture behind the scenes](#understanding-the-architecture-behind-the-scenes-%EF%B8%8F)
 
-[Base functionalities](#base-functionalities)
+[Base functionalities](#base-functionalities-)
 
  - [Costumizing the stream trail color](#costumizing-the-stream-trail-color)
 
@@ -34,9 +34,9 @@ The Rmatrix project leverages advanced features of modern terminals to simulate 
 
  - [Stream fall speed](#stream-fall-speed)
 
-[Rainbow mode](#rainbow-mode)
+[Rainbow mode](#rainbow-mode-)
 
-[Exit the program](#exit-the-program)
+[Exit the program](#exit-the-program-)
 
 ## Building the software 🛠️
 The Rmatrix is a Rust-based application, so its dependencies and compilation are fully managed by Cargo.
