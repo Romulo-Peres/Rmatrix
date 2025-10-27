@@ -1,15 +1,14 @@
 <div align="center">
     <img width="100%" src="./assets/project image.png">
     <h1></h1>
-    <h3>A terminal-based Matrix simulator written in Rust with customizable features.</h3>
+    <h3>A terminal-based Matrix written in Rust with customizable features.</h3>
 </div>
                                                                                   
 <div align="center">
     <img width="100%" src="./assets/rmatrix.gif">
 </div>                   
 <div align="center">                                                  
-The (Remastered) R-matrix uses modern terminal capabilities to simulate a Matrix effect. Its customizable features let you fine-tune the visuals and behaviors for a more personalized experience.
-</div>
+The Rmatrix project leverages advanced features of modern terminals to simulate the iconic matrix effect. It provides customizable options, including color schemes, speed adjustments, and various visual behaviors.</div>
 
 ## Features
 <ul>
@@ -21,87 +20,110 @@ The (Remastered) R-matrix uses modern terminal capabilities to simulate a Matrix
 </ul>
 
 ## Table of contents
-[Compiling the project](#compiling-the-project)
+[Building the software](#building-the-software)
 
-[Running the R-matrix](#running-the-r-matrix)
+[Understanding the architecture behind the scenes](#understanding-the-architecture-behind-the-scenes)
 
-[Custom colors](#custom-colors)
+[Base functionalities](#base-functionalities)
 
- - [Matrix body color](#matrix-body-color)
+ - [Costumizing the stream trail color](#costumizing-the-stream-trail-color)
 
- - [Matrix head color](#matrix-head-color)
+ - [Costumizing the stream head color](#costumizing-the-stream-head-color)
 
-[Custom behaviors](#custom-behaviors)
+ - [Configuring the stream generation interval](#configuring-the-stream-generation-interval)
 
- - [String interval](#string-interval)
+ - [Stream fall speed](#stream-fall-speed)
 
- - [Render speed](#render-speed)
+[Rainbow mode](#rainbow-mode)
 
 [Exit the program](#exit-the-program)
 
-## Compiling the project
-The compilation of the project can be simply done using the cargo build command. Assuming you are at the root of the project, the following command should do the trick:
+## Building the software 🛠️
+The Rmatrix is a Rust-based application, so its dependencies and compilation are fully managed by Cargo.
+
+### Compiling
+You can use the following command to compile the application. Run it from the project root directory:
 ```sh
 cargo build --release
 ```
+After that, the executable file ```rmatrix``` will be generated inside the ```target/release``` directory.
 
-## Running the R-matrix
 
-By default the program runs by just calling its executable that is generated inside the `target/release/` directory:
+## Understanding the architecture behind the scenes ⚙️
+### Head and trail
+The Matrix effect implemented by this program is composed of a large number of streams. Each stream is divided into two parts: the **head** and the **trail**.
+
+The **head** is the first character of a stream.
+
+The **trail** consists of all characters that follow the head, with their color shaded based on how far they are from it.
+
+The colors of the head and trail are customizable. Changing these values will cause all streams in the Matrix to use the new colors.
+
+### Background streams
+Background streams are a visual trick implemented in this project to create a 3D effect in the terminal. Without them, the Matrix would look too flat, breaking the immersion.
+
+### Description:
+
+New streams have a 50% chance of being background streams.
+
+Background streams are the slowest streams (based on the value of the [maximum-stream-delay](#stream-fall-speed) configuration) and are always darker than the other streams.
+
+## Base functionalities 🪛
+After building the source code, the program is ready for use. Running it without any arguments will use the default configuration:
+
 ```sh
 ./rmatrix
 ```
 
-## Custom colors
-R-matrix uses green by default, but you can customize it with your preferred colors.
-
-### Matrix body color
-Setting a new value for the matrix body color will change the color of the strings rendered on screen.
-```sh
-rmatrix --body-color <R> <G> <B>
-```
-
-<b>Default value: 0 255 0 (Green)</b>
-
-    
-### Matrix head color
-Setting a new value for the matrix head color will change the color of the first character in all matrix strings.
-```sh
-rmatrix --head-color <R> <G> <B>
-```
-<b>Default value: 255 255 255 (White)</b>
+Rmatrix also supports several arguments that let you adjust the program to your preferences.
 
 
-## Custom behaviors
-R-matrix also allows you to set the speed at which new strings are generated and how quickly they are rendered on screen.
-
-### String interval
-Setting a new value for the string interval will adjust the delay for creating a new R-matrix string.
+### Costumizing the stream trail color
+By default, the color of the stream trail is **green**. However, you can use the following argument to set it to any other color:
 
 ```sh
-rmatrix --string-interval <Ms>
+--trail-color or -b <RED> <GREEN> <BLUE>
 ```
-<b>Default value: 20 (milliseconds)</b>
 
-### Render speed
-Setting a new value for the render speed will change how quickly the R-matrix strings are pulled down.
+The command above accepts an RGB value, so only numbers in the ```0–255``` range are valid.
+
+### Costumizing the stream head color
+By default, the color of the stream head is **white**, but the following argument allows you to change it:
 ```sh
-rmatrix --render-speed <Ms>
+--head-color or -e <RED> <GREEN> <BLUE>
 ```
-<b>Default value: 30 (milliseconds)</b>
 
-## Operation modes
-R-matrix offers additional modes beyond the default one. Below is a detailed section explaining how they work.
+Only numbers in the ```0–255``` range are valid.
 
-### Rainbow mode
-The rainbow mode generates strings with random body colors, making your terminal and, possibly your setup, vibrant and colorful. The streams' head are set to bright white `(255, 255, 255)`.
+### Configuring the stream generation interval
+By default, a new stream is generated 20 milliseconds after the previous one. This delay works well for average-size screens, but it may be too long for smaller screens or too short for larger ones.
 
-The rainbow mode can not have its colors changed by any flag.
-
-To enable rainbow mode at program startup, use the `--rainbow-mode` flag.
+The following argument allows you to set a custom generation delay:
 ```sh
-rmatrix --rainbow-mode
+--stream-interval or -n <value in ms>
 ```
 
-## Exit the program
-To exit the program while it is running, simply press Enter. The expected behavior is that the matrix will disappear, and all terminal settings will be reset to their default configuration.
+### Stream fall speed
+In addition to background streams, each newly created stream has its own fall speed. Depending on the value set for this configuration, you can create a cool and dynamic Matrix effect.
+
+The fall speed of a new stream is chosen randomly within a range, which defaults to ```40–90``` milliseconds.
+
+You can update this range using the following arguments:
+```sh
+--minimum-stream-delay or -m <MINIMUM_STREAM_DELAY>
+
+--maximum-stream-delay or -M <MAXIMUM_STREAM_DELAY>
+```
+
+**Notes:** Both arguments expect values in milliseconds. The **maximum-stream-delay** must always be greater than the **minimum-stream-delay**.
+
+## Rainbow mode 🌈
+Enabling rainbow mode will assign a random trail color to each stream when it is created, making the terminal very colorful. The color of the stream head is always white.
+
+To enable rainbow mode, use the following argument when running the program:
+```sh
+--rainbow-mode or -a
+```
+
+## Exit the program 🚪
+To exit the program while it is running, simply press Enter. The expected behavior is that the matrix will disappear, and all terminal settings will be reset to their default.
